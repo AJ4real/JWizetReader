@@ -1,22 +1,21 @@
-package me.aj4real.jwizetreader.loader;
+package me.aj4real.jwizetreader.file;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.WeakHashMap;
 
-public class ByteArrayChunkFileLoader extends FileLoader {
+public final class ByteArrayChunkFileLoader extends FileLoader {
 
-    public static int CHUNK_SIZE = 16384;
-    private WeakHashMap<Integer, byte[]> map = new WeakHashMap<>();
+    public final int chunkSize;
+    private final WeakHashMap<Integer, byte[]> map = new WeakHashMap<>();
     private final FileInputStream is;
     private long pointer = 0;
-    private long size;
 
-    public ByteArrayChunkFileLoader(File in) throws IOException {
+    public ByteArrayChunkFileLoader(File in, int chunkSize) throws IOException {
         super(in);
         this.is = new FileInputStream(in);
-        this.size = is.available();
+        this.chunkSize = chunkSize;
     }
 
     @Override
@@ -27,18 +26,18 @@ public class ByteArrayChunkFileLoader extends FileLoader {
 
     @Override
     public byte readByte() throws IOException {
-        int chunkNum = (int) (pointer / CHUNK_SIZE);
+        int chunkNum = (int) (pointer / chunkSize);
         byte[] ret = map.computeIfAbsent(chunkNum, (i) -> {
-            byte[] data = new byte[CHUNK_SIZE];
+            byte[] data = new byte[chunkSize];
             try {
-                is.getChannel().position((long) i * CHUNK_SIZE);
-                is.read(data, 0, CHUNK_SIZE);
+                is.getChannel().position((long) i * chunkSize);
+                is.read(data, 0, chunkSize);
             } catch (IOException e) {
                 e.printStackTrace();
             }
             return data;
         });
-        byte b = ret[(int) (pointer % CHUNK_SIZE)];
+        byte b = ret[(int) (pointer % chunkSize)];
         pointer++;
         return b;
     }

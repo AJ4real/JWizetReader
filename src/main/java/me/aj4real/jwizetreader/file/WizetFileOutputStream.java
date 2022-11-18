@@ -6,10 +6,10 @@ import java.io.RandomAccessFile;
 
 public class WizetFileOutputStream {
 
-    private RandomAccessFile buffer;
-    private byte[] key;
-    private int hash;
-    private boolean noEncryption;
+    private final RandomAccessFile buffer;
+    private final byte[] key;
+    private final int hash;
+    private final boolean noEncryption;
     public WizetFileOutputStream(File in, boolean noEncryption, byte[] key, int hash) throws IOException {
         assert in != null;
         assert key != null;

@@ -1,6 +1,8 @@
-package me.aj4real.jwizetreader;
+package me.aj4real.jwizetreader.propertyTypes;
 
-public interface WizetObject {
+import me.aj4real.jwizetreader.PropertyType;
+
+public sealed interface WizetObject permits WizetContainer, WizetProperty {
     String getName();
     WizetObject getParent();
     PropertyType type();

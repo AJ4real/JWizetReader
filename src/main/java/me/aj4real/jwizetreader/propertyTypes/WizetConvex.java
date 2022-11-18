@@ -2,20 +2,20 @@ package me.aj4real.jwizetreader.propertyTypes;
 
 import me.aj4real.jwizetreader.MalformedWizetFileException;
 import me.aj4real.jwizetreader.PropertyType;
-import me.aj4real.jwizetreader.WizetObject;
 import me.aj4real.jwizetreader.file.WizetFileInputStream;
 import me.aj4real.jwizetreader.WizetFile;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class WizetConvex extends WizetPropertyBlock {
+public final class WizetConvex extends WizetPropertyBlock {
     private final Map<String, WizetObject> children = new HashMap<>();
     public WizetConvex(WizetFileInputStream is, long offset, String name, WizetObject parent, WizetFile parentFile) {
         super(is, offset, name, parent, parentFile);
     }
     @Override
-    public void parse() throws MalformedWizetFileException {
+    public void parse() throws IOException {
         is.setPosition(super.offset);
         long entryCount = is.readCompressedInt();
         for (int i = 0; i < entryCount; i++) {

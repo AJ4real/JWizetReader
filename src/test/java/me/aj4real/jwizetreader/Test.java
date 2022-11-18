@@ -1,7 +1,7 @@
 package me.aj4real.jwizetreader;
 
-import me.aj4real.jwizetreader.loader.ByteArrayChunkFileLoader;
-import me.aj4real.jwizetreader.loader.FileLoader;
+import me.aj4real.jwizetreader.file.ByteArrayChunkFileLoader;
+import me.aj4real.jwizetreader.file.FileLoader;
 
 import java.io.File;
 
@@ -41,7 +41,7 @@ public class Test {
         long fStart = System.currentTimeMillis();
         FileLoader loader = null;
 //        loader = new InputStreamFileLoader(file);       // results: very slow, moderate memory usage
-        loader = new ByteArrayChunkFileLoader(file);    // results: fast, moderate memory usage
+        loader = new ByteArrayChunkFileLoader(file, 16384);    // results: fast, moderate memory usage
 //        loader = new InMemoryFileLoader(file);          // results: extremely fast, high memory usage
 //        loader = new RandomAccessFileLoader(file);      // results: very slow, almost no memory usage
         WizetFile object = new WizetFile(file, loader);

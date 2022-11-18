@@ -3,18 +3,18 @@ package me.aj4real.jwizetreader.propertyTypes;
 import me.aj4real.jwizetreader.MalformedWizetFileException;
 import me.aj4real.jwizetreader.PropertyType;
 import me.aj4real.jwizetreader.SharedConstants;
-import me.aj4real.jwizetreader.WizetObject;
 import me.aj4real.jwizetreader.file.WizetFileInputStream;
 import me.aj4real.jwizetreader.WizetFile;
 
 import java.awt.*;
 import java.awt.image.*;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.zip.DataFormatException;
 import java.util.zip.Inflater;
 
-public class WizetCanvas extends WizetPropertyBlock {
+public final class WizetCanvas extends WizetPropertyBlock {
     private final Map<String, WizetObject> children = new HashMap<>();
     private int width, height, length, format;
     private BufferedImage image;
@@ -23,7 +23,7 @@ public class WizetCanvas extends WizetPropertyBlock {
         super(is, offset, name, parent, parentFile);
     }
     @Override
-    public void parse() throws MalformedWizetFileException {
+    public void parse() throws IOException {
         byte b = is.readByte();
         if(b == 1) {
             is.setPosition(is.getPosition() + 2);
@@ -57,7 +57,7 @@ public class WizetCanvas extends WizetPropertyBlock {
     public int getLength() {
         return this.length;
     }
-    public BufferedImage getImage() {
+    public BufferedImage getImage() throws IOException {
         if(this.image != null) return this.image;
         is.setPosition(imgStart);
         byte[] data = is.readBytes(imgLength);

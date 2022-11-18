@@ -1,11 +1,11 @@
-package me.aj4real.jwizetreader.loader;
+package me.aj4real.jwizetreader.file;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 
-public class InMemoryFileLoader extends FileLoader {
+public final class InMemoryFileLoader extends FileLoader {
 
     WeakReference<byte[]> data;
     long pointer;
@@ -15,7 +15,7 @@ public class InMemoryFileLoader extends FileLoader {
     }
 
     @Override
-    public void dispose() throws IOException {
+    public void dispose() {
         data.enqueue();
         while(data.get() != null) {}
     }

@@ -1,13 +1,14 @@
-package me.aj4real.jwizetreader.file;
+package me.aj4real.jwizetreader.propertyTypes;
 
 import me.aj4real.jwizetreader.*;
-import me.aj4real.jwizetreader.propertyTypes.WizetPropertyBlock;
+import me.aj4real.jwizetreader.file.WizetFileInputStream;
 
+import java.io.IOException;
 import java.util.Map;
 
-public class WizetImageDataEntry implements WizetContainer {
-    protected final WizetFileInputStream is;
-    protected final long offset;
+public final class WizetImageDataEntry implements WizetContainer {
+    private final WizetFileInputStream is;
+    private final long offset;
     private final WizetFile parentFile;
     private boolean parsed = false;
     private final String name;
@@ -38,7 +39,7 @@ public class WizetImageDataEntry implements WizetContainer {
         return this.parent;
     }
     @Override
-    public void parse() throws MalformedWizetFileException {
+    public void parse() throws IOException {
         if(isParsed()) return;
         if(getName().endsWith(".lua")) return; //TODO
         is.setPosition(offset);

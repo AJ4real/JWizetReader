@@ -1,11 +1,11 @@
-package me.aj4real.jwizetreader.loader;
+package me.aj4real.jwizetreader.file;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 
-public class RandomAccessFileLoader extends FileLoader {
+public final class RandomAccessFileLoader extends FileLoader {
 
     private final RandomAccessFile file;
 

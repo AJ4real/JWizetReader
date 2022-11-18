@@ -1,9 +1,9 @@
 package me.aj4real.jwizetreader;
 
-import me.aj4real.jwizetreader.file.WizetDirectoryDataEntry;
+import me.aj4real.jwizetreader.propertyTypes.WizetDirectoryDataEntry;
 import me.aj4real.jwizetreader.file.WizetFileInputStream;
-import me.aj4real.jwizetreader.loader.ByteArrayChunkFileLoader;
-import me.aj4real.jwizetreader.loader.FileLoader;
+import me.aj4real.jwizetreader.file.ByteArrayChunkFileLoader;
+import me.aj4real.jwizetreader.file.FileLoader;
 
 import java.io.File;
 import java.io.IOException;
@@ -20,7 +20,7 @@ public class WizetFile {
     private final File file;
     public final AtomicInteger COUNTER = new AtomicInteger(0); //TODO: for testing
     public WizetFile(File in) throws IOException {
-        this(in, new ByteArrayChunkFileLoader(in));
+        this(in, new ByteArrayChunkFileLoader(in, 16384));
     }
     public WizetFile(File in, FileLoader loader) throws IOException {
         this.file = in;

@@ -1,14 +1,12 @@
-package me.aj4real.jwizetreader.loader;
+package me.aj4real.jwizetreader.file;
 
 import java.io.*;
 
-public class InputStreamFileLoader extends FileLoader {
+public final class InputStreamFileLoader extends FileLoader {
     private FileInputStream is;
-    private long size;
     public InputStreamFileLoader(File in) throws IOException {
         super(in);
         this.is = new FileInputStream(in);
-        this.size = is.available();
     }
 
     @Override

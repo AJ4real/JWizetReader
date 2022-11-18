@@ -15,5 +15,5 @@ public enum PropertyType {
     SOUND,
     STRING,
     UOL,
-    VECTOR;
+    VECTOR
 }

@@ -63,7 +63,7 @@ public class Crypto {
 
     public static byte[] wzMseaIv = new byte[]{(byte) 0xB9, 0x7D, 0x63, (byte) 0xE9};
 
-    public static final long wzOffsetConstant = Integer.toUnsignedLong(0x581C3F6D);
+    public static final long wzOffsetConstant = 0x581C3F6D;
     public static final byte wzHeader = (byte) 0x31474B50;
 
     public static long rotateLeft(long value, byte bit) {

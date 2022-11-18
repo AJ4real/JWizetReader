@@ -2,15 +2,14 @@ package me.aj4real.jwizetreader.propertyTypes;
 
 import me.aj4real.jwizetreader.file.WizetFileInputStream;
 import me.aj4real.jwizetreader.PropertyType;
-import me.aj4real.jwizetreader.WizetContainer;
 import me.aj4real.jwizetreader.WizetFile;
-import me.aj4real.jwizetreader.WizetObject;
 import me.aj4real.jwizetreader.MalformedWizetFileException;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class WizetPropertyBlock implements WizetContainer {
+public sealed class WizetPropertyBlock implements WizetContainer permits WizetCanvas, WizetConvex {
     private final Map<String, WizetObject> children = new HashMap<>();
     public final WizetFileInputStream is;
     public long offset;
@@ -46,13 +45,13 @@ public class WizetPropertyBlock implements WizetContainer {
     }
 
     @Override
-    public void parse() throws MalformedWizetFileException {
+    public void parse() throws IOException {
         if(!isParsed()) {
             this.parsed = true;
             parsePropertyList(is, offset);
         }
     }
-    protected void parsePropertyList(WizetFileInputStream is, long offset) throws MalformedWizetFileException {
+    protected void parsePropertyList(WizetFileInputStream is, long offset) throws IOException {
         long entryCount = is.readCompressedInt();
         for (int i = 0; i < entryCount; i++) {
             String name = is.readStringBlock(offset);
@@ -106,7 +105,7 @@ public class WizetPropertyBlock implements WizetContainer {
             parentFile.COUNTER.incrementAndGet();
         }
     }
-    protected WizetObject parseBlock(WizetFileInputStream is, String imgName, long offset, WizetObject parent) throws MalformedWizetFileException {
+    protected WizetObject parseBlock(WizetFileInputStream is, String imgName, long offset, WizetObject parent) throws IOException {
         String name = "";
         byte nameType = is.readByte();
         switch(nameType) {
@@ -162,10 +161,10 @@ public class WizetPropertyBlock implements WizetContainer {
                 byte b = is.readByte();
                 switch(b) {
                     case 0: {
-                        return new WizetUOL(imgName, parent, is.readString());
+                        return new WizetReference(imgName, parent, is.readString());
                     }
                     case 1: {
-                        return new WizetUOL(imgName, parent, is.readStringAtOffset(offset + is.readInt()));
+                        return new WizetReference(imgName, parent, is.readStringAtOffset(offset + is.readInt()));
                     }
                     default: {
                         throw new MalformedWizetFileException("Unsupported UOL type: " + b, parentFile);

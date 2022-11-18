@@ -1,7 +1,7 @@
 package me.aj4real.jwizetreader.file;
 
+import me.aj4real.jwizetreader.Crypto;
 import me.aj4real.jwizetreader.WizetFile;
-import me.aj4real.jwizetreader.loader.FileLoader;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -15,14 +15,17 @@ public class WizetFileInputStream {
     private byte[] key;
     private int hash;
     private boolean noEncryption = false;
-    public WizetFileInputStream(WizetFile in, FileLoader loader) throws IOException {
+    public WizetFileInputStream(WizetFile in, FileLoader loader) {
         this.file = in;
         this.loader = loader;
     }
     public void setKey(byte[] key) {
         this.key = key;
         for (int i = 0; i < key.length; i++) {
-            if(key[i] == 0) noEncryption = true;
+            if (key[i] == 0) {
+                noEncryption = true;
+                break;
+            }
         }
     }
     public void setHash(int key) {
@@ -32,79 +35,62 @@ public class WizetFileInputStream {
     public void dispose() throws IOException {
         loader.dispose();
     }
-    public long getPosition() {
-        try {
-            return loader.getPosition();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return 0;
+    public long getPosition() throws IOException {
+        return loader.getPosition();
     }
-    public void setPosition(long pos) {
-        try {
-            loader.setPosition(pos);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public void setPosition(long pos) throws IOException {
+        loader.setPosition(pos);
     }
-    public byte readByte() {
-        try {
-            return loader.readByte();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return 0;
+    public byte readByte() throws IOException {
+        return loader.readByte();
     }
 
-    public byte[] readBytes(long num) {
+    public byte[] readBytes(long num) throws IOException {
         byte[] ret = new byte[(int) num];
         for (int x = 0; x < num; x++) {
             ret[x] = readByte();
         }
         return ret;
     }
-    public String readString(long size) {
-        char ret[] = new char[(int) size];
+    public String readString(long size) throws IOException {
+        char[] ret = new char[(int) size];
         for (int x = 0; x < size; x++) {
             ret[x] = (char) readByte();
         }
         return String.valueOf(ret);
     }
-    public double readDouble() {
+    public double readDouble() throws IOException {
         return Double.longBitsToDouble(readLong());
     }
-    public float readFloat() {
+    public float readFloat() throws IOException {
         return ByteBuffer.wrap(readBytes(4)).order(ByteOrder.LITTLE_ENDIAN).getFloat();
     }
-    public char readChar() {
-        return (char) readShort();
-    }
-    public short readShort() {
+    public short readShort() throws IOException {
         int byte1, byte2;
         byte1 = readByte();
         byte2 = readByte();
         return (short) ((byte2 << 8) + byte1);
     }
-    public int readUnsignedShort() {
+    public int readUnsignedShort() throws IOException {
         short current = readShort();
         return current & 0xFF;
     }
-    public int readCompressedInt() {
+    public int readCompressedInt() throws IOException {
         byte b = readByte();
         return b == Byte.MIN_VALUE ? readInt() : b;
     }
-    public long readCompressedLong() {
+    public long readCompressedLong() throws IOException {
         byte b = readByte();
         return b == Byte.MIN_VALUE ? readLong() : b;
     }
-    public long readLong() {
+    public long readLong() throws IOException {
         long ret = 0;
         for (int i = 0; i < 8; i++) {
-            ret |= ((readByte() & 0xff) << (i * 8));
+            ret |= ((long) (readByte() & 0xff) << (i * 8));
         }
         return ret;
     }
-    public int readInt() {
+    public int readInt() throws IOException {
         int ret = 0;
         for (int i = 0; i < 4; i++) {
             ret |= ((readByte() & 0xff) << (i * 8));
@@ -112,7 +98,7 @@ public class WizetFileInputStream {
         return ret;
     }
 
-    public final String readNullTerminatedString() {
+    public final String readNullTerminatedString() throws IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         byte b = 1;
         while (b != 0) {
@@ -126,7 +112,7 @@ public class WizetFileInputStream {
         }
         return String.valueOf(chrBuf);
     }
-    public String readStringBlock(long offset) {
+    public String readStringBlock(long offset) throws IOException {
         byte b = readByte();
 
         switch(b) {
@@ -142,14 +128,14 @@ public class WizetFileInputStream {
                 return null;
         }
     }
-    public String readStringAtOffset(long offset) {
+    public String readStringAtOffset(long offset) throws IOException {
         long rememberPos = getPosition();
         setPosition(offset);
         String ret = readString();
         setPosition(rememberPos);
         return ret;
     }
-    public String readString() {
+    public String readString() throws IOException {
         byte smallLength = readByte();
         if (smallLength == 0) {
             return "";
@@ -208,41 +194,12 @@ public class WizetFileInputStream {
         }
         return retString.toString();
     }
-//    public int readOffset() {
-//        UInteger off = UInteger.valueOf(getPosition());
-//        long off = getPosition();
-//        off -= file.getHeader().start();
-//        off = off ^ 4294967295L;
-//        System.out.println(off + " -> " + ((~off) * hash));
-//        System.exit(69);
-//        off *= hash;
-//        off -= 0x581C3F6D;
-//        off = (off << ((byte) (off & 0x1F))) | (off >>> (32 - ((byte) (off & 0x1F))));
-//        off ^= readInt();
-//        off &= 0xFFFFFFFF;
-//        off += file.getHeader().start() * 2;
-//        return (int) off;
-//    }
-//    public int readOffset() {
-//        UInteger i = UInteger.valueOf(1);
-//        long off = getPosition();
-//        off -= file.getHeader().start();
-////        off = off ^ 4294967295L;
-//        System.exit(69);
-//        off *= hash;
-//        off -= 0x581C3F6D;
-//        off = (off << ((byte) (off & 0x1F))) | (off >>> (32 - ((byte) (off & 0x1F))));
-//        off ^= readInt();
-//        off &= 0xFFFFFFFF;
-//        off += file.getHeader().start() * 2;
-//        return (int) off;
-//    }
-    public int readOffset() {
+    public int readOffset() throws IOException {
         int off = (int) (0xFFFFFFFF & getPosition());
         off -= file.getHeader().start();
         off = ~off;
         off *= hash;
-        off -= 0x581C3F6D;
+        off -= Crypto.wzOffsetConstant;
         off = (off << ((byte) (off & 0x1F))) | (off >>> (32 - ((byte) (off & 0x1F))));
         off ^= readInt();
         off &= 0xFFFFFFFF;

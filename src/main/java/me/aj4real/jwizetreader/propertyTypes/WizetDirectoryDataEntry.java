@@ -1,15 +1,15 @@
-package me.aj4real.jwizetreader.file;
+package me.aj4real.jwizetreader.propertyTypes;
 
 import me.aj4real.jwizetreader.SharedConstants;
 import me.aj4real.jwizetreader.PropertyType;
-import me.aj4real.jwizetreader.WizetContainer;
 import me.aj4real.jwizetreader.WizetFile;
-import me.aj4real.jwizetreader.WizetObject;
+import me.aj4real.jwizetreader.file.WizetFileInputStream;
 import me.aj4real.jwizetreader.MalformedWizetFileException;
 
+import java.io.IOException;
 import java.util.*;
 
-public class WizetDirectoryDataEntry implements WizetContainer {
+public final class WizetDirectoryDataEntry implements WizetContainer {
     private final WizetFileInputStream is;
     private final long offset;
     private final WizetFile parentFile;
@@ -27,9 +27,6 @@ public class WizetDirectoryDataEntry implements WizetContainer {
     public Map<String, WizetObject> getProperties() {
         return this.children;
     }
-    public void align() {
-        is.setPosition(offset);
-    }
     @Override
     public PropertyType type() {
         return PropertyType.DIRECTORY;
@@ -44,7 +41,7 @@ public class WizetDirectoryDataEntry implements WizetContainer {
         return this.parent;
     }
     @Override
-    public void parse() throws MalformedWizetFileException {
+    public void parse() throws IOException {
         if(isParsed()) return;
         parentFile.COUNTER.incrementAndGet();
         is.setPosition(offset);

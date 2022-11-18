@@ -1,4 +1,4 @@
-package me.aj4real.jwizetreader.loader;
+package me.aj4real.jwizetreader.file;
 
 import java.io.File;
 import java.io.IOException;
@@ -9,7 +9,7 @@ public abstract class FileLoader {
         this.in = in;
     }
     public abstract void dispose() throws IOException;
-    public abstract byte readByte() throws IOException ;
-    public abstract void setPosition(long pos) throws IOException ;
-    public abstract long getPosition() throws IOException ;
+    public abstract byte readByte() throws IOException;
+    public abstract void setPosition(long pos) throws IOException;
+    public abstract long getPosition() throws IOException;
 }
